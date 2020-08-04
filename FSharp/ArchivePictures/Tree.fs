@@ -7,6 +7,12 @@ module Tree =
     
     let node x xs = Node (x, xs)
 
+    let rec scan f g z = function
+        | Leaf x -> g x z |> leaf
+        | Node (x, xs) ->
+            let z' = f x z
+            xs |> List.map (scan f g z') |> node z'
+
     let rec cata fd ff = function
         | Leaf x -> ff x
         | Node (x, xs) -> xs |> List.map (cata fd ff) |> fd x

@@ -23,10 +23,6 @@ module Archive =
     let calculateMoves =
         let replaceDirectory (f : FileInfo) d =
             FileInfo (Path.Combine (d, f.Name))
-        let rec imp path = function
-            | Leaf x ->
-                Leaf { Source = x; Destination = replaceDirectory x path }
-            | Node (x, xs) ->
-                let newNPath = Path.Combine (path, x)
-                Tree.node newNPath (List.map (imp newNPath) xs)
-        imp ""
+        let leaf x path = { Source = x; Destination = replaceDirectory x path }
+        let node x path = Path.Combine (path, x)
+        Tree.scan node leaf ""
