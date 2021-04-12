@@ -24,11 +24,13 @@ module Archive =
         let replaceDirectory (fi : FileInfo) d =
             FileInfo (Path.Combine (d, fi.Name))
         let fLeaf fi pathToParent = Leaf { Source = fi; Destination = replaceDirectory fi pathToParent }
+        let fNode directoryName fs pathToParent =
+            let pathToSelf = Path.Combine (pathToParent, directoryName)
+            Tree.node pathToSelf (List.map (fun f -> f pathToSelf) fs)
         let rec imp t pathToParent =
             match t with
             | Leaf fi -> fLeaf fi pathToParent
             | Node (directoryName, trees) ->
                 let fs = List.map imp trees
-                let pathToSelf = Path.Combine (pathToParent, directoryName)
-                Tree.node pathToSelf (List.map (fun f -> f pathToSelf) fs)
+                fNode directoryName fs pathToParent
         imp t ""
