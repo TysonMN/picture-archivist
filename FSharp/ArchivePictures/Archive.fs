@@ -20,7 +20,7 @@ module Archive =
         let m = Tree.foldBack groupByDir t Map.empty
         Map.foldBack addDir m [] |> Tree.node destination
 
-    let calculateMoves =
+    let calculateMoves t =
         let replaceDirectory (fi : FileInfo) d =
             FileInfo (Path.Combine (d, fi.Name))
         let fLeaf fi pathToParent = Leaf { Source = fi; Destination = replaceDirectory fi pathToParent }
@@ -28,5 +28,5 @@ module Archive =
             | Leaf fi -> fLeaf fi pathToParent
             | Node (directoryName, trees) ->
                 let pathToSelf = Path.Combine (pathToParent, directoryName)
-                Tree.node pathToSelf (List.map (imp pathToSelf) trees)
-        imp ""
+                Tree.node pathToSelf (List.map (fun t -> imp pathToSelf t) trees)
+        imp "" t
