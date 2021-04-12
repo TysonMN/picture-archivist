@@ -28,6 +28,7 @@ module Archive =
             match t with
             | Leaf fi -> fLeaf fi pathToParent
             | Node (directoryName, trees) ->
+                let fs = List.map imp trees
                 let pathToSelf = Path.Combine (pathToParent, directoryName)
-                Tree.node pathToSelf (List.map (fun t -> imp t pathToSelf) trees)
+                Tree.node pathToSelf (List.map (fun f -> f pathToSelf) fs)
         imp t ""
